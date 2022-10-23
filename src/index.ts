@@ -6,24 +6,26 @@ import { TwingFilterOptions } from 'twing/dist/types/lib/filter';
 export * as twing from 'twing';
 export { marked };
 
-export type TwigWriterOptions = {
-	view?: string | { (data: Record<string, unknown>): string };
-	viewsDir?: string | string[];
+export namespace twigRenderer {
+	export type Options = {
+		view?: string | { (data: Record<string, unknown>): string };
+		viewsDir?: string | string[];
 
-	// advanced
-	globals?: Record<string, unknown>;
-	functions?: Record<string, TwingCallable<unknown> | [
-		TwingCallable<unknown>,
-		TwingCallableWrapperOptions,
-	]>;
-	filters?: Record<string, TwingCallable<unknown> | [
-		TwingCallable<unknown>,
-		TwingFilterOptions,
-	]>;
-	advanced?: { (env: TwingEnvironment): void };
-	markedEnabled?: boolean;
-	markedOptions?: marked.MarkedOptions;
-};
+		// advanced
+		globals?: Record<string, unknown>;
+		functions?: Record<string, TwingCallable<unknown> | [
+			TwingCallable<unknown>,
+			TwingCallableWrapperOptions,
+		]>;
+		filters?: Record<string, TwingCallable<unknown> | [
+			TwingCallable<unknown>,
+			TwingFilterOptions,
+		]>;
+		advanced?: { (env: TwingEnvironment): void };
+		markedEnabled?: boolean;
+		markedOptions?: marked.MarkedOptions;
+	};
+}
 
 const isAsyncFunction = (fn: { (...args: unknown[]): unknown }): fn is { (...args: unknown[]): Promise<unknown> } => (
 	fn?.constructor?.name === 'AsyncFunction'
@@ -43,7 +45,7 @@ export const twigRenderer = ({
 	advanced = () => undefined,
 	markedEnabled = true,
 	markedOptions = {}
-}: TwigWriterOptions = {}) => {
+}: twigRenderer.Options = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new Error('twig-renderer \'view\' option expects a string or a function.');
 
