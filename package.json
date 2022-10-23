@@ -1,6 +1,6 @@
 {
   "name": "@static-pages/twig-renderer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Twig template engine for Static Pages.",
   "type": "module",
   "main": "cjs/index.js",
