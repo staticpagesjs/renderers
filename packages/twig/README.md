@@ -1,17 +1,15 @@
 # Static Pages / Twig renderer
 
-Renders page data via twig templates.
+Renders documents via twig templates.
 
-Uses the [Twing](https://www.npmjs.com/package/twing) and [Marked](https://www.npmjs.com/package/marked) packages under the hood. Everything provided by Twing and Marked is also exported from this package (for advanced configuration).
+Uses [Twing](https://www.npmjs.com/package/twing) and [Marked](https://www.npmjs.com/package/marked) packages under the hood.
 
-This package is part of the StaticPagesJs project, see:
-- Documentation: [staticpagesjs.github.io](https://staticpagesjs.github.io/)
-- Core: [@static-pages/core](https://www.npmjs.com/package/@static-pages/core)
+This package is part of the [Static Pages](https://staticpagesjs.github.io/) project.
 
 ## Usage
 
 ```js
-import twigRenderer from '@static-pages/twig-renderer';
+import twig from '@static-pages/twig';
 
 const renderer = twigRenderer({
 	viewsDir: 'myViews',
@@ -27,7 +25,7 @@ renderer(pageData); // returns the rendered page as string in a promise.
 
 | Option | Type | Default value | Description |
 |--------|------|---------------|-------------|
-| `view` | `string \| (d: Data) => string` | `main.twig` | Template to render. If it's a function it gets evaluated on each render call. |
+| `view` | `string \| (d: Data) => string` | `{{view}}.html.twig` | Template to render. If it's a function it gets evaluated on each render call. |
 | `viewsDir` | `string \| string[]` | `views` | One or more directory path where the templates are found. |
 | `globals` | `object` | `{}` | Additional properties loaded to the twig environment as globals. |
 | `functions` | `TwigFunctionMap` | `{}` | Functions in an object that gets loaded to the twig environment. |
@@ -63,6 +61,7 @@ export const myTwigFiltersOrFunctions = {
 
 > The defined functions above can be an async functions or regular sync functions. No restrictions like the underlying Twing package makes where you allowed to use async functions only.
 
+> Everything provided by Twing and Marked is also exported from this package (for advanced configuration).
 
 ### `markedOptions` defaults
 This package uses the default options of the [official marked defaults](https://marked.js.org/using_advanced#options):

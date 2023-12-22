@@ -1,7 +1,7 @@
 {
-  "name": "@static-pages/twig-renderer",
+  "name": "@static-pages/twig",
   "version": "1.0.1",
-  "description": "Twig template engine for Static Pages.",
+  "description": "Twig template engine (uses twing package).",
   "type": "module",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -11,9 +11,6 @@
       "require": "./cjs/index.js",
       "default": "./esm/index.js"
     }
-  },
-  "engines": {
-    "node": ">13.2.0"
   },
   "scripts": {
     "prepack": "npm run test",
@@ -27,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/staticpagesjs/twig-renderer.git"
+    "url": "git+https://github.com/staticpagesjs/renderers.git"
   },
   "keywords": [
     "static",
@@ -43,27 +40,19 @@
   "author": "László BULIK",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/staticpagesjs/twig-renderer/issues"
+    "url": "https://github.com/staticpagesjs/renderers/issues"
   },
   "homepage": "https://staticpagesjs.github.io/",
   "dependencies": {
-    "marked": "^4.1.1",
-    "twing": "^5.1.1"
+    "marked": "^11.1.0",
+    "twing": "^6.0.0-beta.1"
   },
   "devDependencies": {
-    "@jest/globals": "^28.1.3",
-    "@types/jest": "^28.1.6",
-    "@types/marked": "^4.0.7",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.0.1",
-    "eslint-plugin-jest": "^26.6.0",
-    "jest": "^28.1.3",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.7.4"
+    "@types/node": "^20.10.5",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
   },
-  "overrides": {
-    "merge": "^2.1.1"
+  "peerDependencies": {
+    "@static-pages/core": "^7.0.0-alpha.1"
   }
 }
