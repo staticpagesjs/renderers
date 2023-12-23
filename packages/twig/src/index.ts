@@ -15,6 +15,7 @@ import * as nodefs from 'node:fs';
 
 export * as twing from 'twing';
 export { marked };
+export { createMarkup as raw };
 
 export type MaybePromise<T> = T | Promise<T>;
 
@@ -42,8 +43,10 @@ const ensureAsyncFunction = (fn: { (...args: any[]): any }): { (...args: any[]):
 		? fn
 		: (...args: any[]) => Promise.resolve(fn(...args));
 
+const defaultView: twig.Options['view'] = ({ view }) => (view ?? 'main') + '.twig';
+
 export const twig = ({
-	view = ({ view }) => (view ?? 'content') + '.html.twig',
+	view = defaultView,
 	views = {},
 	viewsDir,
 	fs = nodefs,
@@ -52,7 +55,7 @@ export const twig = ({
 	configure,
 	markedEnabled = true,
 	markedOptions = {}
-}: twig.Options) => {
+}: twig.Options = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new TypeError(`Expected 'Iterable' or 'AsyncIterable' at 'view' property.`);
 
@@ -84,30 +87,30 @@ export const twig = ({
 	// Provide a built-in markdown filter
 	if (markedEnabled) {
 		env.addFilter(createFilter('markdown',
-			async (context, md, opts) => {
-				if (md == undefined) md = '';
-				else if (typeof md !== 'string') md = '' + md;
+			async (_context, text, options) => {
+				if (text == undefined) text = '';
+				else if (typeof text !== 'string') text = '' + text;
 
-				if (opts) {
-					const { inline, ...rest } = Object.fromEntries(opts.entries());
+				if (options) {
+					const { inline, ...rest } = Object.fromEntries(options.entries());
 					return createMarkup(
-						(inline ? marked.parseInline : marked)(md, { ...markedOptions, ...rest }) as any
+						await (inline ? marked.parseInline : marked)(text, { ...markedOptions, ...rest })
 					);
 				}
-				return createMarkup(marked(md, markedOptions) as any);
+				return createMarkup(await marked(text, markedOptions));
 			},
-			[{ name: 'options', defaultValue: {} }]
+			[{ name: 'options', defaultValue: null }]
 		));
-	}
-
-	// Functions
-	for (const [k, v] of Object.entries(functions)) {
-		env.addFunction(createFunction(k, ensureAsyncFunction(v), []));
 	}
 
 	// Filters
 	for (const [k, v] of Object.entries(filters)) {
-		env.addFilter(createFilter(k, ensureAsyncFunction(v), []));
+		env.addFilter(createFilter(k, ensureAsyncFunction(v), [], { is_variadic: true }));
+	}
+
+	// Functions
+	for (const [k, v] of Object.entries(functions)) {
+		env.addFunction(createFunction(k, ensureAsyncFunction(v), [], { is_variadic: true }));
 	}
 
 	// Advanced configuration if nothing helps.

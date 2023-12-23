@@ -1,7 +1,7 @@
 {
   "name": "@static-pages/twig",
-  "version": "1.0.1",
-  "description": "Twig template engine (uses twing package).",
+  "version": "2.0.0-alpha.0",
+  "description": "Twig template engine bridge package using twing.",
   "type": "module",
   "main": "cjs/index.js",
   "module": "esm/index.js",
@@ -13,18 +13,37 @@
     }
   },
   "scripts": {
-    "prepack": "npm run test",
+    "prepack": "npm run build && npm run test",
+    "postversion": "git push && git push --tags",
+    "clean": "rimraf esm cjs coverage",
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc",
     "watch:esm": "tsc --watch",
-    "build:cjs": "tsc --project tsconfig.cjs.json && echo { \"type\": \"commonjs\" }>cjs/package.json",
-    "watch:cjs": "npm run build:cjs && tsc --project tsconfig.cjs.json --watch",
-    "test": "eslint src && npm run build && cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
-    "clean": "rimraf esm cjs"
+    "build:cjs": "tsc --outDir cjs --module commonjs && echo { \"type\": \"commonjs\" }>cjs/package.json",
+    "watch:cjs": "npm run build:cjs && tsc --outDir cjs --module commonjs --watch",
+    "test": "mocha",
+    "coverage": "c8 -r text -r text-summary -r lcov --include \"esm/*\" npm test"
   },
+  "dependencies": {
+    "marked": "^11.1.0",
+    "twing": "^6.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "c8": "^8.0.1",
+    "mocha": "^10.2.0",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  },
+  "author": "László BULIK",
+  "license": "MPL-2.0",
+  "homepage": "https://staticpagesjs.github.io/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/staticpagesjs/renderers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/staticpagesjs/renderers/issues"
   },
   "keywords": [
     "static",
@@ -36,23 +55,5 @@
     "view",
     "template",
     "twig"
-  ],
-  "author": "László BULIK",
-  "license": "MPL-2.0",
-  "bugs": {
-    "url": "https://github.com/staticpagesjs/renderers/issues"
-  },
-  "homepage": "https://staticpagesjs.github.io/",
-  "dependencies": {
-    "marked": "^11.1.0",
-    "twing": "^6.0.0-beta.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.5",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.3.3"
-  },
-  "peerDependencies": {
-    "@static-pages/core": "^7.0.0-alpha.1"
-  }
+  ]
 }
