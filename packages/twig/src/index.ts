@@ -54,7 +54,7 @@ export const twig = ({
 	filters = {},
 	configure,
 	markedEnabled = true,
-	markedOptions = {}
+	markedOptions = {},
 }: twig.Options = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new TypeError(`Expected 'Iterable' or 'AsyncIterable' at 'view' property.`);
@@ -120,36 +120,36 @@ export const twig = ({
 };
 
 function cwdfs(fs: TwingFilesystemLoaderFilesystem, paths: string | string[]): TwingFilesystemLoaderFilesystem {
-    if (!Array.isArray(paths)) paths = [paths];
-    return {
-        readFile: (filePath, callback: any) => {
-            findPath(filePath, (err, fullPath) => {
-                if (err) return callback(err);
-                fs.readFile(fullPath!, callback);
-            });
-        },
-        stat: (filePath, callback: any) => {
-            findPath(filePath, (err, fullPath) => {
-                if (err) return callback(err);
-                fs.stat(fullPath!, callback);
-            });
-        }
-    };
+	if (!Array.isArray(paths)) paths = [paths];
+	return {
+		readFile: (filePath, callback: any) => {
+			findPath(filePath, (err, fullPath) => {
+				if (err) return callback(err);
+				fs.readFile(fullPath!, callback);
+			});
+		},
+		stat: (filePath, callback: any) => {
+			findPath(filePath, (err, fullPath) => {
+				if (err) return callback(err);
+				fs.stat(fullPath!, callback);
+			});
+		},
+	};
 
-    function findPath(filePath: string, callback: (err: Error | null, path?: string) => void) {
-        let checkedPaths = 0;
-        for (let p of paths) {
-            const fullPath = join(p, filePath);
-            fs.stat(fullPath, (err, stats) => {
-                if (!err && stats!.isFile()) {
-                    return callback(null, fullPath);
-                }
-                if (++checkedPaths === paths.length) {
-                    callback(new Error(`File not found: ${filePath}`));
-                }
-            });
-        }
-    }
+	function findPath(filePath: string, callback: (err: Error | null, path?: string) => void) {
+		let checkedPaths = 0;
+		for (let p of paths) {
+			const fullPath = join(p, filePath);
+			fs.stat(fullPath, (err, stats) => {
+				if (!err && stats!.isFile()) {
+					return callback(null, fullPath);
+				}
+				if (++checkedPaths === paths.length) {
+					callback(new Error(`File not found: ${filePath}`));
+				}
+			});
+		}
+	}
 }
 
 export default twig;
