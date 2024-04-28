@@ -8,13 +8,13 @@ import {
 	createFilter,
 	createMarkup,
 } from 'twing';
-import type { MarkedOptions } from 'marked';
-import { marked } from 'marked';
+import type { MarkedOptions, MarkedExtension } from 'marked';
+import { Marked } from 'marked';
 import { join } from 'node:path';
 import * as nodefs from 'node:fs';
 
 export * as twing from 'twing';
-export { marked };
+export * as marked from 'marked';
 export { createMarkup as raw };
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -30,6 +30,7 @@ export namespace twig {
 		configure?: { (env: TwingEnvironment): void };
 		markedEnabled?: boolean;
 		markedOptions?: MarkedOptions;
+		markedExtensions?: MarkedExtension[];
 	};
 }
 
@@ -55,6 +56,7 @@ export const twig = ({
 	configure,
 	markedEnabled = true,
 	markedOptions = {},
+	markedExtensions = [],
 }: twig.Options = {}) => {
 	if (typeof view !== 'string' && typeof view !== 'function')
 		throw new TypeError(`Expected 'Iterable' or 'AsyncIterable' at 'view' property.`);
@@ -86,6 +88,7 @@ export const twig = ({
 
 	// Provide a built-in markdown filter
 	if (markedEnabled) {
+		const marked = new Marked(...markedExtensions);
 		env.addFilter(createFilter('markdown',
 			async (_context, text, options) => {
 				if (text == undefined) text = '';
@@ -94,10 +97,10 @@ export const twig = ({
 				if (options) {
 					const { inline, ...rest } = Object.fromEntries(options.entries());
 					return createMarkup(
-						await (inline ? marked.parseInline : marked)(text, { ...markedOptions, ...rest })
+						await (inline ? marked.parseInline : marked.parse)(text, { ...markedOptions, ...rest })
 					);
 				}
-				return createMarkup(await marked(text, markedOptions));
+				return createMarkup(await marked.parse(text, markedOptions));
 			},
 			[{ name: 'options', defaultValue: null }]
 		));
