@@ -1,6 +1,6 @@
 {
   "name": "@static-pages/twig",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Twig template engine bridge package using twing.",
   "type": "module",
   "main": "cjs/index.js",
@@ -14,7 +14,6 @@
   },
   "scripts": {
     "prepack": "npm run build && npm run test",
-    "postversion": "git push && git push --tags",
     "clean": "rimraf esm cjs coverage",
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc",
