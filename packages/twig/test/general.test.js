@@ -211,6 +211,24 @@ describe('General Tests', () => {
 		assert.deepStrictEqual(rendered, expected);
 	});
 
+	it('uses given globals', async () => {
+		const renderer = twig({
+			globals: {
+				content: 'abc',
+				hello: 'world',
+			},
+			views: {
+				'main.twig': '{{ content }} template {{ hello }}',
+			}
+		});
+
+		const rendered = await renderer({ content: 'foo' });
+
+		const expected = 'foo template world';
+
+		assert.deepStrictEqual(rendered, expected);
+	});
+
 	it('can apply special configuration to twig env', async () => {
 		const renderer = twig({
 			views: {
