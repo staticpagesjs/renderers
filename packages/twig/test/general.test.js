@@ -104,7 +104,7 @@ describe('General Tests', () => {
 
 		const rendered = await renderer({ content: '# foo' });
 
-		const expected = '<h1>foo</h1>\n';
+		const expected = '<h1>foo</h1>';
 
 		assert.deepStrictEqual(rendered, expected);
 	});
@@ -257,7 +257,7 @@ describe('General Tests', () => {
 
 		const rendered = await renderer({ content: {} });
 
-		const expected = 'a<p>[object Object]</p>\nbc';
+		const expected = 'a<p>[object Object]</p>bc';
 
 		assert.deepStrictEqual(rendered, expected);
 	});
@@ -286,7 +286,7 @@ describe('General Tests', () => {
 
 		const rendered = await renderer({ content: '~~Hi~~ Hello, ~there~ world!' });
 
-		const expected = '<p>~~Hi~~ Hello, ~there~ world!</p>\n';
+		const expected = '<p>~~Hi~~ Hello, ~there~ world!</p>';
 
 		assert.deepStrictEqual(rendered, expected);
 	});
@@ -300,7 +300,7 @@ describe('General Tests', () => {
 
 		const rendered = await renderer({ content: '~~Hi~~ Hello, ~there~ world!' });
 
-		const expected = '<p>~~Hi~~ Hello, ~there~ world!</p>\n';
+		const expected = '<p>~~Hi~~ Hello, ~there~ world!</p>';
 
 		assert.deepStrictEqual(rendered, expected);
 	});

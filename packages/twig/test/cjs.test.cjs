@@ -35,7 +35,7 @@ describe('CommonJS Tests', () => {
 
 		const rendered = await renderer({ content: '# foo' });
 
-		const expected = '<h1>foo</h1>\n';
+		const expected = '<h1>foo</h1>';
 
 		assert.deepStrictEqual(rendered, expected);
 	});
