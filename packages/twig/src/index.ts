@@ -113,10 +113,10 @@ export const twig = ({
 				if (options) {
 					const { inline, ...rest } = Object.fromEntries(options.entries());
 					return createMarkup(
-						await (inline ? marked.parseInline : marked.parse)(text, { ...markedOptions, ...rest })
+						(await (inline ? marked.parseInline : marked.parse)(text, { ...markedOptions, ...rest })).trim()
 					);
 				}
-				return createMarkup(await marked.parse(text, markedOptions));
+				return createMarkup((await marked.parse(text, markedOptions)).trim());
 			},
 			[{ name: 'options', defaultValue: null }]
 		));
