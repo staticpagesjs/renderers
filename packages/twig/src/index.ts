@@ -10,6 +10,7 @@ import {
 } from 'twing';
 import type { MarkedOptions, MarkedExtension } from 'marked';
 import { Marked } from 'marked';
+import { join } from 'node:path';
 import * as nodefs from 'node:fs';
 
 export * as twing from 'twing';
@@ -79,14 +80,17 @@ export const twig = ({
 
 	let loader;
 	if (viewsDir) {
-		const fsLoader = createFilesystemLoader(fs);
-		if (Array.isArray(viewsDir)) {
-			for (const dir of viewsDir) {
-				fsLoader.addPath(dir);
-			}
-		} else {
-			fsLoader.addPath(viewsDir);
-		}
+		// HOTFIX: https://gitlab.com/nightlycommit/twing/-/issues/621
+		const fsLoader = createFilesystemLoader(cwdfs(fs, viewsDir));
+		// UNCOMMENT WHEN #621 IS FIXED:
+		// const fsLoader = createFilesystemLoader(fs);
+		// if (Array.isArray(viewsDir)) {
+		// 	for (const dir of viewsDir) {
+		// 		fsLoader.addPath(dir);
+		// 	}
+		// } else {
+		// 	fsLoader.addPath(viewsDir);
+		// }
 		if (views) {
 			loader = createChainLoader([createArrayLoader(views), fsLoader])
 		} else {
@@ -139,3 +143,37 @@ export const twig = ({
 };
 
 export default twig;
+
+// HOTFIX: https://gitlab.com/nightlycommit/twing/-/issues/621
+function cwdfs(fs: TwingFilesystemLoaderFilesystem, paths: string | string[]): TwingFilesystemLoaderFilesystem {
+	if (!Array.isArray(paths)) paths = [paths];
+	return {
+		readFile: (filePath, callback: any) => {
+			findPath(filePath, (err, fullPath) => {
+				if (err) return callback(err);
+				fs.readFile(fullPath!, callback);
+			});
+		},
+		stat: (filePath, callback: any) => {
+			findPath(filePath, (err, fullPath) => {
+				if (err) return callback(err);
+				fs.stat(fullPath!, callback);
+			});
+		},
+	};
+
+	function findPath(filePath: string, callback: (err: Error | null, path?: string) => void) {
+		let checkedPaths = 0;
+		for (let p of paths) {
+			const fullPath = join(p, filePath);
+			fs.stat(fullPath, (err, stats) => {
+				if (!err && stats!.isFile()) {
+					return callback(null, fullPath);
+				}
+				if (++checkedPaths === paths.length) {
+					callback(new Error(`File not found: ${filePath}`));
+				}
+			});
+		}
+	}
+}
